@@ -1,36 +1,45 @@
 from collections import defaultdict
-import functools
-
-input = open('exa.input').read().splitlines()
+from functools import reduce
+import sys
 
 matrix = defaultdict(lambda: float('inf'))
-parsed = [[int(x) for x in line] for line in input]
-positions = [tuple((x[0], j[0])) for x in enumerate(input) for j in enumerate(x[1])]
+with open('bb.input') as input:
+  i = 0
+  for line in input:
+    for j in range(len(line.strip())):
+      matrix[(i,j)] = int(line[j])
+    i += 1
 
-for pos in positions:
-  matrix[pos] = parsed[pos[0]][pos[1]]
-
-flooded = defaultdict(bool)
-
-def flood(pos):
-  flooded[pos] = True
-  (i, j) = pos
-  adjs = ((i+1, j), (i-1, j), (i, j+1), (i, j-1))
-
-  sum = 1
-  for adj in adjs:
-    if matrix[adj] != 9 and not flooded[adj] and matrix[adj] != float('inf'):
-      sum += flood(adj)
+def flood(pos, positions, matrix=matrix):
+  sum = 0
+  children = [pos]
+  matrix[pos] = 9
+  while children:
+    child = children.pop()
+    (i, j) = child
+    adjs = ((i+1, j), (i-1, j), (i, j+1), (i, j-1))
+    sum += 1
+    for adj in adjs:
+      if matrix[adj] not in (9, float('inf')):
+        children.append(adj)
+        positions.remove(adj)
+        matrix[adj] = 9
   return sum
 
+
 basins = []
-for pos in positions:
-  if matrix[pos] != 9 and not flooded[pos]:
-    basins.append(flood(pos))
+positions = set(matrix.keys())
+while positions:
+  pos = positions.pop()
+  if matrix[pos] != 9:
+    basins.append(flood(pos, positions))
 
-print(functools.reduce(lambda x, y: x*y, sorted(basins)[-3:]))
+print(reduce(lambda x, y: x*y, sorted(basins)[-3:]))
 
+# Part 1
 # def smolest(x, args):
+#   (i, j) = pos
+#   adjs = ((i+1, j), (i-1, j), (i, j+1), (i, j-1))
 #   for arg in args:
 #     if x >= arg:
 #       return False
