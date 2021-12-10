@@ -2,39 +2,58 @@ from collections import defaultdict
 from functools import reduce
 import sys
 
-matrix = defaultdict(lambda: float('inf'))
-with open('bb.input') as input:
-  i = 0
+# Adding walls of 9 around input
+# 999999
+# 9....9
+# 9....9
+# 999999
+M = 0
+N = 0
+matrix = []
+with open('input') as input:
   for line in input:
-    for j in range(len(line.strip())):
-      matrix[(i,j)] = int(line[j])
-    i += 1
+    if not matrix:
+      N = len(line.strip()) + 2
+      matrix.append(['9']*N)
+    n = [x for x in line.strip()]
+    n.insert(0, '9')
+    n.append('9')
+    matrix.append(n)
+    M += 1
+  matrix.append(['9']*N)
+  M += 2
 
-def flood(pos, positions, matrix=matrix):
+positions = set([(i, j) for j in range(1, N-1) for i in range(1, M-1)])
+
+def flood(pos):
   sum = 0
   children = [pos]
-  matrix[pos] = 9
+  i, j = pos
+  matrix[i][j] = '9'
   while children:
     child = children.pop()
-    (i, j) = child
+    i, j = child
     adjs = ((i+1, j), (i-1, j), (i, j+1), (i, j-1))
     sum += 1
     for adj in adjs:
-      if matrix[adj] not in (9, float('inf')):
+      i, j = adj
+      if matrix[i][j] != '9':
         children.append(adj)
         positions.remove(adj)
-        matrix[adj] = 9
+        matrix[i][j] = '9'
   return sum
 
-
-basins = []
-positions = set(matrix.keys())
+b = [0]*3
 while positions:
-  pos = positions.pop()
-  if matrix[pos] != 9:
-    basins.append(flood(pos, positions))
+  i, j = positions.pop()
+  if matrix[i][j] != '9':
+    r = flood((i, j))
+    for i in range(3):
+      if b[i] < r:
+        b.insert(i, r)
+        break
 
-print(reduce(lambda x, y: x*y, sorted(basins)[-3:]))
+print(b[0] * b[1] * b[2])
 
 # Part 1
 # def smolest(x, args):
