@@ -10,7 +10,7 @@ import sys
 M = 0
 N = 0
 matrix = []
-with open('input') as input:
+with open('bb.input') as input:
   for line in input:
     if not matrix:
       N = len(line.strip()) + 2
@@ -20,12 +20,10 @@ with open('input') as input:
     n.append('9')
     matrix.append(n)
     M += 1
-  matrix.append(['9']*N)
+  matrix.append(matrix[0])
   M += 2
 
-positions = set([(i, j) for j in range(1, N-1) for i in range(1, M-1)])
-
-def flood(pos):
+def bfs(pos):
   sum = 0
   children = [pos]
   i, j = pos
@@ -39,20 +37,16 @@ def flood(pos):
       i, j = adj
       if matrix[i][j] != '9':
         children.append(adj)
-        positions.remove(adj)
         matrix[i][j] = '9'
   return sum
 
-b = [0]*3
-while positions:
-  i, j = positions.pop()
-  if matrix[i][j] != '9':
-    r = flood((i, j))
-    for i in range(3):
-      if b[i] < r:
-        b.insert(i, r)
-        break
+b = []
+for i in range(1, M-1):
+  for j in range(1, N-1):
+    if matrix[i][j] != '9':
+      b.append(bfs((i, j)))
 
+b = sorted(b, reverse=True)
 print(b[0] * b[1] * b[2])
 
 # Part 1
