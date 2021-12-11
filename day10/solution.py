@@ -1,10 +1,9 @@
-input = open('input').read().splitlines()
+input = open('bb.input').read().splitlines()
 
 pair     = {'(': ')', '[': ']', '{': '}', '<': '>'}
 error    = {')': 3, ']': 57, '}': 1197, '>': 25137}
 complete = {'(': 1, '[': 2, '{': 3, '<': 4}
-close    = {')', '}', '>', ']'}
-
+close    = set(')}]>')
 q = []
 
 def solve(line):
