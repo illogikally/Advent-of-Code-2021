@@ -15,7 +15,7 @@ for line in input:
 
 ended = []
 def traverse(path, vertex, duplicate):
-  path.add(vertex)
+  path.append(vertex)
 
   if vertex == 'end':
     ended.append(path)
@@ -31,5 +31,5 @@ def traverse(path, vertex, duplicate):
       traverse(path.copy(), neighbor, duplicate)
 
 
-traverse(set(), 'start', False)
+traverse([], 'start', False)
 print(len(ended))
