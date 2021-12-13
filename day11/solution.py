@@ -4,8 +4,8 @@ matrix = [[int(x) for x in line] for line in input]
 
 def flash(pos):
   i, j = pos
-  adjs = [(i+ii, j+jj) for jj in range(-1, 2) for ii in range(-1, 2)]
-  adjs = set([(i, j) for (i, j) in adjs if i in range(0,10) and j in range(0, 10)])
+  adjs = [(i+ii, j+jj) for jj in (-1, 0, 1) for ii in (-1, 0, 1)]
+  adjs = set([(i, j) for (i, j) in adjs if i in range(0, 10) and j in range(0, 10)])
   flashed.add(pos)
   for adj in adjs:
     i, j = adj
@@ -21,16 +21,20 @@ def step():
       if matrix[i][j] > 9 and (i, j) not in flashed:
         flash((i, j))
 
-  if len(flashed) == 100:
-    return True
+  flash_count = len(flashed)
 
   while flashed:
     i, j = flashed.pop()
     matrix[i][j] = 0
   
+  return flash_count
+  
+  
 flashed = set()
 flash_count = 0
-for i in range(500):
-  if step():
-    print(i)
+all_flashed = 0
+while True:
+  all_flashed += 1
+  if step() == 100:
+    print(all_flashed)
     break
